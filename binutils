@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import os, sys, inspect
+
+class BinUtils():
+    def list(self):
+        print "list"
+
+utils = BinUtils()
+method = sys.argv[1] if len(sys.argv) > 1 else "list"
+try:
+    getattr(utils, method)()
+except:
+    def f(e):
+        return e if "__" not in e else None
+    print "Usage: binutils [command] [options]\nwhere command is one of: %s" % ", ".join(filter(f, dir(utils)))
