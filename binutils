@@ -1,16 +1,22 @@
 #!/usr/bin/python
 
-import os, sys, inspect
+import os, sys
+BINUTILS_VERSION = '0.0.1'
 
 class BinUtils():
-    def list(self):
-        print "list"
+    def ls(self):
+        names = os.listdir(sys.path[0])
+        def f(e):
+            return True if "." not in e else False
+        names = filter(f, names)
+        print "binutils version %s" % BINUTILS_VERSION
+        print "Commands available: %s" % ", ".join(names)
 
 utils = BinUtils()
-method = sys.argv[1] if len(sys.argv) > 1 else "list"
+method = sys.argv[1] if len(sys.argv) > 1 else "ls"
 try:
     getattr(utils, method)()
-except:
+except AttributeError:
     def f(e):
         return e if "__" not in e else None
     print "Usage: binutils [command] [options]\nwhere command is one of: %s" % ", ".join(filter(f, dir(utils)))
