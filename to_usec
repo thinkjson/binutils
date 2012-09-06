@@ -1,0 +1,12 @@
+#!/usr/bin/python
+
+import sys
+import time
+import calendar
+
+dt = sys.argv
+dt.pop(0)
+dt_str = " ".join(dt)
+timeobj = time.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+timestamp = int(calendar.timegm(timeobj) * 1000000)
+print timestamp
