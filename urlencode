@@ -1,0 +1,8 @@
+#!/usr/bin/python
+
+from urllib import quote
+import sys
+
+content = sys.argv
+content.pop(0)
+print quote(" ".join(content))
