@@ -5,7 +5,12 @@ import sys
 import pipes
 import time
 
-(process, host) = sys.argv[1:]
+try:
+    (process, host) = sys.argv[1:]
+except ValueError:
+    print "Usage: monitor [process] [host]"
+    sys.exit()
+
 output = 'Checking...'
 while len(output) > 0:
     try:

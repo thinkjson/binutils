@@ -11,6 +11,4 @@ Clone the repo and add the directory to your path. I use ~/.bash_profile for thi
 
 ## Commands
 
-	decide [options]
-		Choose an option from a whitespace separated list provided on the command line.
-		Supports glob syntax.
+Run `binutils` to see a list of commands. Run a command with no arguments to see usage.
