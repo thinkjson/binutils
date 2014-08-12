@@ -3,6 +3,9 @@
 import sys
 import time
 
-timestamp = int(sys.argv[1]) / 1000000
-dt = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(timestamp))
-print dt
+try:
+	timestamp = int(sys.argv[1]) / 1000000
+	dt = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(timestamp))
+	print dt
+except IndexError:
+	print "Usage: from_usec [microseconds]"

@@ -5,4 +5,8 @@ import sys
 
 content = sys.argv
 content.pop(0)
-print quote(" ".join(content))
+if len(content) > 0:
+	print quote(" ".join(content))
+else:
+	print "Usage: urldecode [text]"
+

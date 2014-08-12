@@ -7,17 +7,19 @@ import sys
 import yaml
 from yaml import load, load_all, dump
 import json
+
+if sys.stdin.isatty():
+	print "Usage: echo '- yaml' | yaml2json"
+	sys.exit()
+
 try:
     from yaml import CLoader as Loader
     from yaml import CDumper as Dumper
-    sys.stderr.write("Sweet. Using C yaml...\n")
 except ImportError:
     from yaml import Loader, Dumper
-    sys.stderr.write("WARNING: Could not use C yaml\n")
 
 cnt = 0
 for d in load_all(sys.stdin, Loader=Loader):
     if cnt > 0: sys.stdout.write(",\n")
     sys.stdout.write(json.dumps(d, indent=4, sort_keys=True))
     cnt += 1
-    sys.stderr.write("%d pages loaded...\n" % cnt)

@@ -2,4 +2,7 @@
 from datetime import datetime
 import sys
 
-print datetime.fromtimestamp(float(sys.argv[1])).strftime('%Y-%m-%d %H:%M:%S')
+try:
+	print datetime.fromtimestamp(float(sys.argv[1])).strftime('%Y-%m-%d %H:%M:%S')
+except IndexError:
+	print "Usage: from_timestamp [timestamp]"
