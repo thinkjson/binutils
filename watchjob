@@ -1,0 +1,36 @@
+#!/usr/bin/python
+
+import requests
+import subprocess
+import sys
+import time
+
+try:
+    jenkins_url = sys.argv[1]
+except IndexError:
+    print "Usage: watchjob [jenkins_url]"
+    sys.exit()
+
+jenkins_url += "api/json"
+
+job_info = requests.get(jenkins_url).json()
+latest_build = job_info['builds'][0]['url'] + 'api/json'
+
+output = {}
+while 'result' not in output or output['result'] is None:
+    try:
+        output = requests.get(latest_build).json()
+        if 'result' not in output or output['result'] is None:
+            print 'RUNNING'
+        time.sleep(1)
+    except KeyboardInterrupt:
+        sys.exit()
+
+print output['result']
+
+while True:
+    try:
+        subprocess.call('say {process} is complete 2>/dev/null'.format(process=job_info['displayName']), shell=True)
+        time.sleep(15)
+    except KeyboardInterrupt:
+        sys.exit()
