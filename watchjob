@@ -13,13 +13,13 @@ except IndexError:
 
 jenkins_url += "api/json"
 
-job_info = requests.get(jenkins_url).json()
+job_info = requests.get(jenkins_url, verify=False).json()
 latest_build = job_info['builds'][0]['url'] + 'api/json'
 
 output = {}
 while 'result' not in output or output['result'] is None:
     try:
-        output = requests.get(latest_build).json()
+        output = requests.get(latest_build, verify=False).json()
         if 'result' not in output or output['result'] is None:
             print 'RUNNING'
         time.sleep(1)
