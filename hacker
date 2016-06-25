@@ -1,0 +1,2 @@
+#!/bin/bash
+od -c </dev/urandom | egrep --color '(0|1)'
