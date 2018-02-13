@@ -14,7 +14,10 @@ print "I'll run this until it fails: \n%s" % args.until_command
 print "Once it fails (exit code != 0), I'll run: \n%s" % args.finally_command
 
 working = False
+times = 0
 while working is not True:
     working = subprocess.call(args.until_command, shell=True) != 0
+    times += 1
+    print "I've run this command {0} times so far...".format(times)
 
 subprocess.call(args.finally_command, shell=True)
