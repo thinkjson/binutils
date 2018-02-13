@@ -1,0 +1,20 @@
+#!/usr/bin/python
+
+import argparse
+import subprocess
+
+# Parse command line arguments
+parser = argparse.ArgumentParser(
+    description='Execute a command until fails, then execute a different command')
+parser.add_argument('until_command', help='Command to execute until failure')
+parser.add_argument('finally_command', help='Command to execute upon failure')
+args = parser.parse_args()
+
+print "I'll run this until it fails: \n%s" % args.until_command
+print "Once it fails (exit code 0), I'll run: \n%s" % args.finally_command
+
+working = False
+while working is not True:
+    working = subprocess.call(args.until_command, shell=True) != 0
+
+subprocess.call(args.finally_command, shell=True)
