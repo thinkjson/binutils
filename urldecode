@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-from urllib import unquote
+from urllib.parse import unquote
 import sys
 
 content = sys.argv
 content.pop(0)
 if len(content) > 0:
-	print unquote(" ".join(content))
+	print(unquote(" ".join(content)))
 else:
-	print "Usage: urldecode [text]"
+	print("Usage: urldecode [text]")
