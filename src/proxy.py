@@ -11,8 +11,10 @@ from tenacity import retry, retry_if_result, stop_after_attempt, wait_exponentia
 DEFAULT_REGION = "nyc3"
 DEFAULT_SIZE = "s-1vcpu-512mb-10gb"
 DEFAULT_IMAGE = "ubuntu-24-04-x64"
-HOURLY_COST_USD = 0.006
+HOURLY_COST_USD = 0.00595
+MIN_HOURS = 1 / 60  # Minimum billing time of 1 minute
 SSH_LOCAL_PORT = 1080
+SSH_REMOTE_PORT = 22
 
 def find_default_public_key() -> Path:
     ssh_dir = Path.home() / ".ssh"
@@ -89,6 +91,20 @@ def wait_for_droplet_ip(
     raise TimeoutError(
         "Timed out waiting for droplet to become active and receive a public IP"
     )
+
+
+def wait_for_tcp_port(
+    host: str, port: int, timeout_seconds: int = 180, poll_interval: float = 2.0
+) -> None:
+    deadline = time.time() + timeout_seconds
+    while time.time() < deadline:
+        try:
+            with socket.create_connection((host, port), timeout=2.0):
+                return
+        except OSError:
+            time.sleep(poll_interval)
+
+    raise TimeoutError(f"Timed out waiting for {host}:{port} to accept connections")
 
 
 def destroy_droplet(client: Client, droplet_id: int) -> None:
@@ -171,10 +187,13 @@ def main() -> int:
         print(f"Using SSH key id: {ssh_key_id}")
 
         droplet_id = create_droplet(client, ssh_key_id)
-        print(f"Created droplet id: {droplet_id}, waiting for ssh to be ready...")
+        print(f"Created droplet id: {droplet_id}, waiting for droplet to obtain an IP address...")
 
         ip = wait_for_droplet_ip(client, droplet_id)
-        print(f"Droplet ready at: {ip}, took {int(time.monotonic() - started_at)}s")
+        print(f"Droplet ready at {ip}")
+        print(f"Waiting for SSH port {SSH_REMOTE_PORT} to start listening...")
+        wait_for_tcp_port(ip, SSH_REMOTE_PORT)
+        print(f"SSH port is accepting connections, took {int(time.monotonic() - started_at)}s")
 
         try:
             exit_code = run_ssh_command(ip)
@@ -203,7 +222,7 @@ def main() -> int:
                 )
 
         elapsed_hours = (time.monotonic() - started_at) / 3600.0
-        estimated_cost = elapsed_hours * HOURLY_COST_USD
+        estimated_cost = max(elapsed_hours, MIN_HOURS) * HOURLY_COST_USD
         print(f"Estimated cost: ${estimated_cost:.6f} (at ${HOURLY_COST_USD:.3f}/hour)")
 
     return exit_code
