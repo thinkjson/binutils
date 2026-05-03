@@ -118,6 +118,8 @@ def build_ssh_command(ip: str) -> list[str]:
         str(SSH_LOCAL_PORT),
         "-o",
         "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
         "-C",
         "-N",
         f"root@{ip}",
